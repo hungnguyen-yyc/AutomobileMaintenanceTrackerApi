@@ -1,9 +1,10 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMTApi", "AMTApi\AMTApi.csproj", "{F8362972-44AC-4A5D-905C-F1EACF5A5460}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2005
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AMTApi", "AMTApi\AMTApi.csproj", "{F8362972-44AC-4A5D-905C-F1EACF5A5460}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMTDll", "..\AMTDll.DLL\AMTDll.csproj", "{EBA7C81E-956F-4650-A176-157B6111A004}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AMTDll", "AMTDll\AMTDll.csproj", "{79E7806C-657E-4D08-92C0-ADC4431BE199}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +16,15 @@ Global
 		{F8362972-44AC-4A5D-905C-F1EACF5A5460}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8362972-44AC-4A5D-905C-F1EACF5A5460}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8362972-44AC-4A5D-905C-F1EACF5A5460}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EBA7C81E-956F-4650-A176-157B6111A004}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EBA7C81E-956F-4650-A176-157B6111A004}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EBA7C81E-956F-4650-A176-157B6111A004}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBA7C81E-956F-4650-A176-157B6111A004}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79E7806C-657E-4D08-92C0-ADC4431BE199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79E7806C-657E-4D08-92C0-ADC4431BE199}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79E7806C-657E-4D08-92C0-ADC4431BE199}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79E7806C-657E-4D08-92C0-ADC4431BE199}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {71A5BF5D-CBCD-40B1-9A89-587959D2B37C}
 	EndGlobalSection
 EndGlobal
