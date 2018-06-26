@@ -9,7 +9,7 @@ namespace AMTDll
 {
     public class Repository<T> : IRepository<T>
     {
-        private string DATA_DIRECTORY = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        private string DATA_DIRECTORY = "./data";//Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
         private const string VEHICLE_DATA_PATH = "vehicles.dat";
         private const string SERVICES_DATA_PATH = "services.dat";
         private const string SERVICE_PROVIDERS_DATA_PATH = "service-providers.dat";
