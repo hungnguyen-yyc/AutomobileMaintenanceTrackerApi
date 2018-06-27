@@ -6,13 +6,14 @@ using AMTApi.Models;
 using AMTDll;
 using AMTDll.Models;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace AMTApi.Controllers
 {
     [Route("api/[controller]")]
     public class VehiclesController : Controller
     {
-        IRepository<VehicleModel> _repo = new Repository<VehicleModel>();
+        IRepository<VehicleModel> _repo = Repository<VehicleModel>.Instance;
 
         [HttpGet]
         public IEnumerable<VehicleModel> Get()
@@ -20,8 +21,8 @@ namespace AMTApi.Controllers
             return _repo.Read();
         }
 
-        [HttpPost]//use post vehicle to prevent id generate from client
-        public void Post([FromBody]PostVehicleModel value)
+        [HttpPost]
+        public string Post([FromBody]PostVehicleModel value)
         {
             var vehicle = new VehicleModel()
             {
@@ -32,21 +33,36 @@ namespace AMTApi.Controllers
                 Year = value.Year,
                 VehicleType = value.VehicleType
             };
-            _repo.Create(vehicle);
+            if (vehicle.Validate().Length == 0)
+            {
+                _repo.Create(vehicle);
+                return JsonConvert.SerializeObject(new ResultModel("New Vehicle Created", false));
+            }
+            return JsonConvert.SerializeObject(new ResultModel(vehicle.Validate().Aggregate((a, b) => $"{a} | {b}"), true));
         }
 
         [HttpPut]
-        public void Put([FromBody]VehicleModel value)
+        public string Put([FromBody]VehicleModel value)
         {
-            _repo.Update(value);
+            if (value.Validate().Length == 0)
+            {
+                _repo.Update(value);
+                return JsonConvert.SerializeObject(new ResultModel($"Vehicle {value.Plate} Updated!", false));
+            }
+            return JsonConvert.SerializeObject(new ResultModel(value.Validate().Aggregate((a, b) => $"{a} | {b}"), true));
         }
 
         [HttpDelete("{id}")]
-        public void Delete(string id)
+        public string Delete(string id)
         {
             var veh = Get().FirstOrDefault(item => item.Id == new Guid(id));
             if (veh != null)
+            {
                 _repo.Remove(veh);
+                return JsonConvert.SerializeObject(new ResultModel($"Vehicle {veh.Plate} Deleted!", false));
+            }
+            return JsonConvert.SerializeObject(new ResultModel("Provider Not Found", true));
+
         }
     }
 }

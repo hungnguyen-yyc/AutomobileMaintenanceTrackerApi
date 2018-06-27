@@ -15,8 +15,27 @@ namespace AMTDll
         private const string SERVICE_PROVIDERS_DATA_PATH = "service-providers.dat";
         private Dictionary<Type, string> _dataPaths = new Dictionary<Type, string>();
         private List<T> _itemList;
-        
-        public Repository()
+
+        private static Repository<T> instance = null;
+        private static readonly object padlock = new object();
+
+
+        public static Repository<T> Instance
+        {
+            get
+            {
+                lock (padlock)
+                {
+                    if (instance == null)
+                    {
+                        instance = new Repository<T>();
+                    }
+                    return instance;
+                }
+            }
+        }
+
+        Repository()
         {
             _dataPaths.Add(typeof(VehicleModel), Path.Combine(DATA_DIRECTORY, VEHICLE_DATA_PATH));
             _dataPaths.Add(typeof(ServiceModel), Path.Combine(DATA_DIRECTORY, SERVICES_DATA_PATH));
@@ -32,7 +51,8 @@ namespace AMTDll
                 }
                 using (var sr = new StreamReader(_dataPaths[typeof(T)]))
                 {
-                    _itemList = JsonConvert.DeserializeObject<List<T>>(sr.ReadToEnd());
+                    var lst = JsonConvert.DeserializeObject<List<T>>(sr.ReadToEnd());
+                    _itemList = lst == null ? _itemList : lst;
                 }
             }
             catch (Exception e)

@@ -13,40 +13,44 @@ using Newtonsoft.Json;
 namespace AMTApi.Controllers
 {
     [Route("api/[controller]")]
-    public class ServiceProvidersController : Controller
+    public class ServicesController : Controller
     {
-        IRepository<ServiceProviderModel> _repo = Repository<ServiceProviderModel>.Instance;
+        IRepository<ServiceModel> _repo = Repository<ServiceModel>.Instance;
 
         [HttpGet]
-        public IEnumerable<ServiceProviderModel> Get()
+        public IEnumerable<ServiceModel> Get()
         {
             return _repo.Read();
         }
 
         [HttpPost]
-        public string Post([FromBody]PostServiceProviderModel value)
+        public string Post([FromBody]PostServiceModel value)
         {
-            var provider = new ServiceProviderModel()
+            var service = new ServiceModel()
             {
-                ShopName = value.ShopName,
-                Address = value.Address,
-                Phone = value.Phone
+                VehicleId = value.VehicleId,
+                ProviderId = value.ProviderId,
+                Cost = value.Cost,
+                Note = value.Note,
+                Odometer = value.Odometer,
+                ServiceType = value.ServiceType,
+                Date = value.Date
             };
-            if (provider.Validate().Length == 0)
+            if (service.Validate().Length == 0)
             {
-                _repo.Create(provider);
-                return JsonConvert.SerializeObject(new ResultModel($"New Provider Created!", false));
+                _repo.Create(service);
+                return JsonConvert.SerializeObject(new ResultModel("Service Created", false));
             }
-            return JsonConvert.SerializeObject(new ResultModel(provider.Validate().Aggregate((a,b) => $"{a} | {b}"), true));
+            return JsonConvert.SerializeObject(new ResultModel(service.Validate().Aggregate((a, b) => $"{a} | {b}"), true));
         }
 
         [HttpPut]
-        public string Put([FromBody]ServiceProviderModel value)
+        public string Put([FromBody]ServiceModel value)
         {
             if (value.Validate().Length == 0)
             {
                 _repo.Update(value);
-                return JsonConvert.SerializeObject(new ResultModel($"Provider {value.ShopName} Updated!", false));
+                return JsonConvert.SerializeObject(new ResultModel("Service Updated", false));
             }
             return JsonConvert.SerializeObject(new ResultModel(value.Validate().Aggregate((a, b) => $"{a} | {b}"), true));
         }
@@ -58,7 +62,7 @@ namespace AMTApi.Controllers
             if (veh != null)
             {
                 _repo.Remove(veh);
-                return JsonConvert.SerializeObject(new ResultModel($"Provider {veh.ShopName} Deleted!", false));
+                return JsonConvert.SerializeObject(new ResultModel("Service Deleted", false));
             }
             return JsonConvert.SerializeObject(new ResultModel("Provider Not Found", true));
 

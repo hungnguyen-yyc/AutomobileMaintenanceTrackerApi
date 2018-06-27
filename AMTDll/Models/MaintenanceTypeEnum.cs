@@ -2,10 +2,11 @@
 {
     public enum MaintenanceTypeEnum
     {
-        OilChange,
+        OilChange = 1,
         TireChange,
         TireRotation,
         BrakeChange,
         FluidCheck,
+        BatteryChange
     }
 }

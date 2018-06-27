@@ -14,5 +14,9 @@ namespace AMTDll.Models
         public Guid Id { get; set; }
         [JsonProperty("lastUpdated")]
         public DateTime LastUpdated { get; set; }
+        public virtual string[] Validate()
+        {
+            return new[] {""};
+        }
     }
 }

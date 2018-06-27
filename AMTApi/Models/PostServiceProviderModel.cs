@@ -7,7 +7,7 @@ namespace AMTApi.Models
 {
     public class PostServiceProviderModel
     {
-        [JsonProperty("shop")]
+        [JsonProperty("name")]
         public string ShopName { get; set; }
         [JsonProperty("address")]
         public string Address { get; set; }
