@@ -16,26 +16,7 @@ namespace AMTDll
         private Dictionary<Type, string> _dataPaths = new Dictionary<Type, string>();
         private List<T> _itemList;
 
-        private static Repository<T> instance = null;
-        private static readonly object padlock = new object();
-
-
-        public static Repository<T> Instance
-        {
-            get
-            {
-                lock (padlock)
-                {
-                    if (instance == null)
-                    {
-                        instance = new Repository<T>();
-                    }
-                    return instance;
-                }
-            }
-        }
-
-        Repository()
+        public Repository()
         {
             _dataPaths.Add(typeof(VehicleModel), Path.Combine(DATA_DIRECTORY, VEHICLE_DATA_PATH));
             _dataPaths.Add(typeof(ServiceModel), Path.Combine(DATA_DIRECTORY, SERVICES_DATA_PATH));
@@ -122,7 +103,8 @@ namespace AMTDll
             {
                 using (var sw = File.CreateText(_dataPaths[typeof(T)]))                 
                 {
-                    sw.WriteLine(JsonConvert.SerializeObject(_itemList));                 
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.Serialize(sw, _itemList.ToArray());                
                 }
             }
             catch (Exception e)

@@ -38,9 +38,6 @@ namespace AMTDll.Models
             {
                 errors.Add("Invalid Odometer");
             }
-            var serviceVehicleValidation = new ServicesValidation().Validation(ServiceType, VehicleId);
-            if (!string.IsNullOrWhiteSpace(serviceVehicleValidation))
-                errors.Add(serviceVehicleValidation);
             return errors.ToArray();
         }
 

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AMTDll;
+using AMTDll.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -31,6 +33,11 @@ namespace AMTApi
                        .AllowAnyMethod()
                        .AllowAnyHeader();
             }));
+
+            services.AddTransient<IRepository<VehicleModel>, Repository<VehicleModel>>();
+            services.AddTransient<IRepository<ServiceModel>, Repository<ServiceModel>>();
+            services.AddTransient<IRepository<ServiceProviderModel>, Repository<ServiceProviderModel>>();
+            services.AddTransient<IServicesValidation, ServicesValidation>();
 
             // Add framework services.
             services.AddMvc();

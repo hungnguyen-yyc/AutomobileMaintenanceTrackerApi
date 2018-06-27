@@ -15,7 +15,11 @@ namespace AMTApi.Controllers
     [Route("api/[controller]")]
     public class ServiceProvidersController : Controller
     {
-        IRepository<ServiceProviderModel> _repo = Repository<ServiceProviderModel>.Instance;
+        IRepository<ServiceProviderModel> _repo;
+
+        public ServiceProvidersController(IRepository<ServiceProviderModel> repository){
+            _repo = repository;
+        }
 
         [HttpGet]
         public IEnumerable<ServiceProviderModel> Get()
@@ -26,42 +30,57 @@ namespace AMTApi.Controllers
         [HttpPost]
         public string Post([FromBody]PostServiceProviderModel value)
         {
-            var provider = new ServiceProviderModel()
+            try
             {
-                ShopName = value.ShopName,
-                Address = value.Address,
-                Phone = value.Phone
-            };
-            if (provider.Validate().Length == 0)
-            {
-                _repo.Create(provider);
-                return JsonConvert.SerializeObject(new ResultModel($"New Provider Created!", false));
+                var provider = value.ToServiceProviderModel();
+                if (provider.Validate().Length == 0)
+                {
+                    _repo.Create(provider);
+                    return JsonConvert.SerializeObject(new ResultModel($"New Provider Created!", false));
+                }
+                return JsonConvert.SerializeObject(new ResultModel(provider.Validate().Aggregate((a,b) => $"{a} | {b}"), true));            
             }
-            return JsonConvert.SerializeObject(new ResultModel(provider.Validate().Aggregate((a,b) => $"{a} | {b}"), true));
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ResultModel(ex.Message, true));
+            }
         }
 
         [HttpPut]
         public string Put([FromBody]ServiceProviderModel value)
         {
-            if (value.Validate().Length == 0)
+            try
             {
-                _repo.Update(value);
-                return JsonConvert.SerializeObject(new ResultModel($"Provider {value.ShopName} Updated!", false));
+                if (value.Validate().Length == 0)
+                {
+                    _repo.Update(value);
+                    return JsonConvert.SerializeObject(new ResultModel($"Provider {value.ShopName} Updated!", false));
+                }
+                return JsonConvert.SerializeObject(new ResultModel(value.Validate().Aggregate((a, b) => $"{a} | {b}"), true));
             }
-            return JsonConvert.SerializeObject(new ResultModel(value.Validate().Aggregate((a, b) => $"{a} | {b}"), true));
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ResultModel(ex.Message, true));
+            }
         }
 
         [HttpDelete("{id}")]
         public string Delete(string id)
         {
-            var veh = Get().FirstOrDefault(item => item.Id == new Guid(id));
-            if (veh != null)
+            try
             {
-                _repo.Remove(veh);
-                return JsonConvert.SerializeObject(new ResultModel($"Provider {veh.ShopName} Deleted!", false));
+                var veh = Get().FirstOrDefault(item => item.Id == new Guid(id));
+                if (veh != null)
+                {
+                    _repo.Remove(veh);
+                    return JsonConvert.SerializeObject(new ResultModel($"Provider {veh.ShopName} Deleted!", false));
+                }
+                return JsonConvert.SerializeObject(new ResultModel("Provider Not Found", true));
             }
-            return JsonConvert.SerializeObject(new ResultModel("Provider Not Found", true));
-
+            catch (Exception ex)
+            {
+                return JsonConvert.SerializeObject(new ResultModel(ex.Message, true));
+            }
         }
     }
 }

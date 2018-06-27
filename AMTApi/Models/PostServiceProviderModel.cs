@@ -13,5 +13,14 @@ namespace AMTApi.Models
         public string Address { get; set; }
         [JsonProperty("phone")]
         public string Phone { get; set; }
+
+        public ServiceProviderModel ToServiceProviderModel(){
+            return new ServiceProviderModel()
+            {
+                ShopName = this.ShopName,
+                Address = this.Address,
+                Phone = this.Phone
+            };
+        }
     }
 }

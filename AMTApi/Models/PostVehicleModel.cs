@@ -7,9 +7,6 @@ namespace AMTApi.Models
 {
     public class PostVehicleModel
     {
-        public PostVehicleModel()
-        {
-        }
         [Required]
         [JsonProperty("make")]
         public string Make { get; set; }
@@ -28,5 +25,17 @@ namespace AMTApi.Models
         [Required]
         [JsonProperty("odometer")]
         public int Odometer { get; set; }
+
+        public VehicleModel ToVehicleModel(){
+            return new VehicleModel()
+            {
+                Make = this.Make,
+                Model = this.Model,
+                Odometer = this.Odometer,
+                Plate = this.Plate,
+                Year = this.Year,
+                VehicleType = this.VehicleType
+            };
+        }
     }
 }

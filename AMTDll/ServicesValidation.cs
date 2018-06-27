@@ -5,7 +5,7 @@ using AMTDll.Models;
 
 namespace AMTDll
 {
-    public class ServicesValidation
+    public class ServicesValidation : IServicesValidation
     {
         Dictionary<MaintenanceTypeEnum, VehicleTypeEnum[]> _invalidServices = new Dictionary<MaintenanceTypeEnum, VehicleTypeEnum[]>();
 
@@ -14,13 +14,13 @@ namespace AMTDll
             _invalidServices.Add(MaintenanceTypeEnum.OilChange, new[] { VehicleTypeEnum.Electric });
         }
 
-        bool Validation(MaintenanceTypeEnum maintenanceType, VehicleTypeEnum vehicle)
+        public bool Validation(MaintenanceTypeEnum maintenanceType, VehicleTypeEnum vehicleType)
         {
             try
             {
                 var vehicleTypes = _invalidServices[maintenanceType];
                 if (vehicleTypes == null) return true;
-                return vehicleTypes.All(v => v != vehicle);
+                return vehicleTypes.All(v => v != vehicleType);
             }
             catch (KeyNotFoundException ex)
             {
@@ -32,25 +32,6 @@ namespace AMTDll
                 Console.WriteLine(ex.Message);
                 return true;
             }
-        }
-
-        public string Validation(MaintenanceTypeEnum maintenanceType, Guid VehicleId)
-        {
-            try
-            {
-                var vehicles = Repository<VehicleModel>.Instance.Read();
-                if (vehicles == null) return "Vehicles Not Available";
-                var vehicle = vehicles.FirstOrDefault(v => v.Id == VehicleId);
-                if (vehicle == null) return "Vehicle Not Found";
-                if (Validation(maintenanceType, vehicle.VehicleType))
-                    return "";
-                return $"{maintenanceType.ToString()} isn't provided to this type ({vehicle.VehicleType.ToString()}) of vehicle";
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-
         }
     }
 }

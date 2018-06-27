@@ -20,5 +20,17 @@ namespace AMTApi.Models
         public int Odometer { get; set; }
         [JsonProperty("date")]
         public DateTime Date { get; set; }
+
+        public ServiceModel ToServiceModel(){
+            return new ServiceModel { 
+                ProviderId = this.ProviderId,
+                ServiceType = this.ServiceType,
+                VehicleId = this.VehicleId,
+                Note = this.Note,
+                Cost = this.Cost,
+                Odometer = this.Odometer,
+                Date = this.Date
+            };
+        }
     }
 }
