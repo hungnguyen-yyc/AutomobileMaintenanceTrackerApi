@@ -14,9 +14,11 @@ namespace AMTApi.Controllers
     public class VehiclesController : Controller
     {
         IRepository<VehicleModel> _repo;
+        IRepository<ServiceModel> _serviceRepo;
 
-        public VehiclesController(IRepository<VehicleModel> repo){
+        public VehiclesController(IRepository<VehicleModel> repo, IRepository<ServiceModel> serviceRepo){
             _repo = repo;
+            _serviceRepo = serviceRepo;
         }
 
         [HttpGet]
@@ -31,7 +33,7 @@ namespace AMTApi.Controllers
             try
             {
                 var vehicle = value.ToVehicleModel();
-                var validation = ValidateService(vehicle);
+                var validation = ValidateVehicle(vehicle);
                 if (validation.Length == 0)
                 {
                     _repo.Create(vehicle);
@@ -50,7 +52,7 @@ namespace AMTApi.Controllers
         {
             try
             {
-                var validation = ValidateService(value);
+                var validation = ValidateVehicle(value);
                 if (validation.Length == 0)
                 {
                     _repo.Update(value);
@@ -72,6 +74,10 @@ namespace AMTApi.Controllers
                 var veh = Get().FirstOrDefault(item => item.Id == new Guid(id));
                 if (veh != null)
                 {
+                    if(_serviceRepo.Read().Any(ser => ser.VehicleId == new Guid(id)))
+                    {
+                        return JsonConvert.SerializeObject(new ResultModel($"Can't remove {veh.Make} {veh.Model} as it's used in services!", true));
+                    }
                     _repo.Remove(veh);
                     return JsonConvert.SerializeObject(new ResultModel($"Vehicle {veh.Plate} Deleted!", false));
                 }
@@ -83,7 +89,7 @@ namespace AMTApi.Controllers
             }
         }
 
-        string[] ValidateService(VehicleModel vehicle)
+        string[] ValidateVehicle(VehicleModel vehicle)
         {
             var errors = new List<string>();
             try

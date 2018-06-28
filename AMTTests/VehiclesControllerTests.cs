@@ -12,6 +12,12 @@ namespace AMTTests
     public class VehiclesControllerTests
     {
         VehiclesController _controller;
+        Mock<IRepository<ServiceModel>> _serviceRepo;
+
+        public VehiclesControllerTests()
+        {
+            _serviceRepo = new Mock<IRepository<ServiceModel>>();
+        }
 
         [Fact]
         public void Should_not_create_or_update_vehicle_on_post_put_when_provided_null_post_vehicle()
@@ -19,7 +25,7 @@ namespace AMTTests
             //Arrange
             var _vehicleRepo = new Mock<IRepository<VehicleModel>>();
             var _vehicleValidation = new Mock<IServicesValidation>();
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Post(null));
@@ -48,7 +54,7 @@ namespace AMTTests
                 Year = 0,
             };
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Post(post));
@@ -76,7 +82,7 @@ namespace AMTTests
                 Year = 0,
             };
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Post(post));
@@ -104,7 +110,7 @@ namespace AMTTests
                 Year = 0,
             };
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Post(post));
@@ -132,7 +138,7 @@ namespace AMTTests
                 Year = 0,
             };
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Post(post));
@@ -160,7 +166,7 @@ namespace AMTTests
                 Year = 0,
             };
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Post(post));
@@ -188,7 +194,7 @@ namespace AMTTests
                 Year = -1,
             };
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Post(post));
@@ -216,7 +222,7 @@ namespace AMTTests
                 Year = -1,
             };
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Post(post));
@@ -234,7 +240,25 @@ namespace AMTTests
             var id = Guid.NewGuid();
             _vehicleRepo.Setup(setup => setup.Read()).Returns(new System.Collections.Generic.List<VehicleModel>() { new VehicleModel() { Id = id } });
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
+
+            //Act
+            var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Delete(Guid.NewGuid().ToString()));
+
+            //Assert
+            Assert.True(result.IsError);
+        }
+
+        [Fact]
+        public void Should_not_delete_vehicle_on_delete_when_vehicle_being_used_in_service()
+        {
+            //Arrange
+            var _vehicleRepo = new Mock<IRepository<VehicleModel>>();
+
+            var id = Guid.NewGuid();
+            _vehicleRepo.Setup(setup => setup.Read()).Returns(new System.Collections.Generic.List<VehicleModel>() { new VehicleModel() { Id = Guid.NewGuid() } });
+            _serviceRepo.Setup(setup => setup.Read()).Returns(new System.Collections.Generic.List<ServiceModel> { new ServiceModel { ProviderId = id } });
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Delete(Guid.NewGuid().ToString()));
@@ -251,8 +275,9 @@ namespace AMTTests
 
             var id = Guid.NewGuid();
             _vehicleRepo.Setup(setup => setup.Read()).Returns(new System.Collections.Generic.List<VehicleModel>() { new VehicleModel() { Id = id } });
+            _serviceRepo.Setup(setup => setup.Read()).Returns(new System.Collections.Generic.List<ServiceModel> { new ServiceModel { ProviderId = Guid.NewGuid() } });
 
-            _controller = new VehiclesController(_vehicleRepo.Object);
+            _controller = new VehiclesController(_vehicleRepo.Object, _serviceRepo.Object);
 
             //Act
             var result = JsonConvert.DeserializeObject<ResultModel>(_controller.Delete(id.ToString()));

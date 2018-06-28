@@ -16,9 +16,11 @@ namespace AMTApi.Controllers
     public class ServiceProvidersController : Controller
     {
         IRepository<ServiceProviderModel> _repo;
+        IRepository<ServiceModel> _serviceRepo;
 
-        public ServiceProvidersController(IRepository<ServiceProviderModel> repository){
+        public ServiceProvidersController(IRepository<ServiceProviderModel> repository, IRepository<ServiceModel> serviceRepo){
             _repo = repository;
+            _serviceRepo = serviceRepo;
         }
 
         [HttpGet]
@@ -72,6 +74,10 @@ namespace AMTApi.Controllers
                 var veh = Get().FirstOrDefault(item => item.Id == new Guid(id));
                 if (veh != null)
                 {
+                    if (_serviceRepo.Read().Any(ser => ser.ProviderId == new Guid(id)))
+                    {
+                        return JsonConvert.SerializeObject(new ResultModel($"Can't remove {veh.ShopName} as it's used in services!", true));
+                    }
                     _repo.Remove(veh);
                     return JsonConvert.SerializeObject(new ResultModel($"Provider {veh.ShopName} Deleted!", false));
                 }
